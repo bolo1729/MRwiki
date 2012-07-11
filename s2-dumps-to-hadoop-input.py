@@ -58,7 +58,7 @@ class DumpsProcessor:
 			namespace = record[1]
 			title = record[2]
 
-#			print '%s:%s\tp\t%s\t%s' % (lang, pageId, namespace, title.encode('utf-8'))
+			print '%s:%s\tp\t%s\t%s' % (lang, pageId, namespace, title.encode('utf-8'))
 
 	def processRedirects(self, lang, records):
 		for record in records:
@@ -66,7 +66,7 @@ class DumpsProcessor:
 			toNamespace = record[1]
 			toTitle = record[2]
 
-#			print '%s:%s\tr\t%s\t%s' % (lang, fromId, toNamespace, toTitle.encode('utf-8'))
+			print '%s:%s\tr\t%s\t%s' % (lang, fromId, toNamespace, toTitle.encode('utf-8'))
 
 	def processLanglinks(self, fromLang, records):
 		for record in records:
@@ -74,7 +74,7 @@ class DumpsProcessor:
 			toLang = record[1].encode('utf-8')
 			toTitle = record[2]
 
-#			print '%s:%s\tl\t%s:%s' % (fromLang, fromId, toLang, toTitle.encode('utf-8'))
+			print '%s:%s\tl\t%s:%s' % (fromLang, fromId, toLang, toTitle.encode('utf-8'))
 
 	def processPagelinks(self, lang, records):
 		for record in records:
