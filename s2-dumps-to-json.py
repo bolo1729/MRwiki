@@ -120,7 +120,8 @@ class DumpsProcessor(mrjob.job.MRJob):
                         nextBracket = sys.maxint
                     end = min(nextComma, nextBracket)
                     if end == sys.maxint:
-                        raise Exception, 'Unexpected end of line'
+                        self.increment_counter('parser problems', 'unexpected eol')
+                        return
                     
                     record += [line[start:end].replace('_', ' ')]
                     cur = end + 1
@@ -132,7 +133,8 @@ class DumpsProcessor(mrjob.job.MRJob):
                     while True:
                         cur = line.find(type, cur)
                         if cur == -1:
-                            raise Exception, 'Unexpected end of line'
+                            self.increment_counter('parser problems', 'unexpected eol redux')
+                            return
                         backslashes = 0
                         while line[cur - 1 - backslashes] == '\\':
                             backslashes += 1
@@ -143,12 +145,14 @@ class DumpsProcessor(mrjob.job.MRJob):
                     end = cur
                     cur += 1
                     if line[cur] != ',' and line[cur] != ')':
-                        raise Exception
+                        self.increment_counter('parser problems', 'syntax error')
+                        return
                     cur += 1
                     text = line[start:end].replace('\\\'', '\'').replace('\\\"', '\"').replace('\\\\', '\\').replace('_', ' ')
                     try:
                         text = text.decode('utf-8')
                     except UnicodeDecodeError:
+                        self.increment_counter('parser problems', 'unicode decode error')
                         valid = False
                     record += [text]
                     if line[end + 1] == ')':
