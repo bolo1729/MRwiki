@@ -1,5 +1,5 @@
 #!/bin/bash
-# Interwiki analysis tools
+# MRwiki -- tools for analyzing Wikipedia content (especially links) using Python and MapReduce. 
 # Copyright (C) 2007-2012  Lukasz Bolikowski
 #
 # This program is free software: you can redistribute it and/or modify
