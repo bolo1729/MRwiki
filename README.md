@@ -18,12 +18,11 @@ By default, it downloads all the editions listed below.
 You can override the selection by passing
 the codes of the requested editions as command-line arguments.
 Note that the script will store the dumps in the current working directory.
-* `s2-dumps-to-hadoop-input.py <dumps-dir>` — converts dumps in the directory specified by the first argument to a Hadoop-friendly text file.
-Logs go to standard error (as defined in `logging.conf`) while the (large) text file is printed on the standard output.
-You can redirect the standard output to a file, and copy that file to HDFS.
+You should now copy all the dumps to a directory in HDFS.
 
-### Preprocessing
+### Preprocessing (Hadoop jobs)
 
+* `s2-dumps-to-json.py` — converts all the dumps one Hadoop-friendly text file (JSON format by default).
 * `s4-link-redirects.py` — …
 * `s5-remove-double-redirects.py` — …
 * `s6-link-langlinks.py` — …
