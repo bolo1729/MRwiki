@@ -18,6 +18,9 @@
 import mrjob.job, os, re, sys
 
 class DumpsProcessor(mrjob.job.MRJob):
+
+    OUTPUT_PROTOCOL = mrjob.protocol.JSONProtocol
+
     def mapper(self, key, line):
         if not line.startswith('INSERT INTO'):
             return
