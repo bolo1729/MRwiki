@@ -23,7 +23,7 @@ class DumpsProcessor(mrjob.job.MRJob):
             return
 
         fileName = os.environ['map_input_file']
-        match = re.match(r'(.*/)?(?P<lang>[a-z]+(_[a-z]+(_[a-z]+)?)?)wiki-(?P<date>\d{8})-(?P<type>[a-z]+).sql.gz', fileName)
+        match = re.match(r'(.*/)?(?P<lang>[a-z]+(_[a-z]+(_[a-z]+)?)?)wiki-(?P<date>\d{8})-(?P<type>[a-z]+)\.sql(\..*)?', fileName)
         if not match:
             return
         dumpLang = match.group('lang').replace('_', '-')
