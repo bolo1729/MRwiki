@@ -17,11 +17,8 @@
 
 import mrjob.job, mrjob.protocol
 
-class LinkChecker(mrjob.job.MRJob):
-    """Performs various sanity checks on links.
-    Removes any non-redirect links originating from redirect pages.
-    Removes langlinks between pages in the same language.
-    """
+class DirectionEraser(mrjob.job.MRJob):
+    """Adds symmetric links."""
 
     INPUT_PROTOCOL = mrjob.protocol.JSONProtocol
     OUTPUT_PROTOCOL = mrjob.protocol.JSONProtocol
@@ -30,32 +27,17 @@ class LinkChecker(mrjob.job.MRJob):
         fromId = key
         relType = line[0]
         toId = line[1]
-
-        if relType == 'll':
-            fromLang = fromId[0:fromId.find(':')]
-            toLang = toId[0:toId.find(':')]
-            if fromLang == toLang:
-                self.increment_counter('Problems', 'Langlinks between pages in the same language')
-            else:
-                yield key, line
-        else:
-            yield key, line
+        yield fromId, (relType, toId)
+        yield toId, (relType, fromId)
 
     def reducer(self, key, values):
-        redirect, others = None, []
+        targets = set()
         for value in values:
-            if value[0] == 'r':
-                redirect = value
-            else:
-                others.append(value)
-
-        if redirect is None:
-            for other in others:
-                yield key, other
-        elif len(others) > 0:
-            self.increment_counter('Problems', 'Links from redirect pages')
+            targets |= set([(value[0], value[1])])
+        for target in targets:
+            yield key, target
 
 if __name__ == '__main__':
-    LinkChecker.run()
+    DirectionEraser.run()
 
 # vim: ts=4 sw=4 et

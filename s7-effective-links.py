@@ -17,45 +17,42 @@
 
 import mrjob.job, mrjob.protocol
 
-class LinkChecker(mrjob.job.MRJob):
-    """Performs various sanity checks on links.
-    Removes any non-redirect links originating from redirect pages.
-    Removes langlinks between pages in the same language.
-    """
+class EffectiveLinksFinder(mrjob.job.MRJob):
+    """Finds effective targets of links (after redirects)."""
 
     INPUT_PROTOCOL = mrjob.protocol.JSONProtocol
     OUTPUT_PROTOCOL = mrjob.protocol.JSONProtocol
 
+    def configure_options(self):
+        super(EffectiveLinksFinder, self).configure_options()
+        self.add_passthrough_option('--rel-type', type='string', default=None, help='Type of relations to process')
+
     def mapper(self, key, line):
         fromId = key
         relType = line[0]
-        toId = line[1]
-
-        if relType == 'll':
-            fromLang = fromId[0:fromId.find(':')]
-            toLang = toId[0:toId.find(':')]
-            if fromLang == toLang:
-                self.increment_counter('Problems', 'Langlinks between pages in the same language')
-            else:
-                yield key, line
-        else:
+        if relType == 'r':
             yield key, line
+        else:
+            toId = line[1]
+            yield toId, (relType, fromId)
 
     def reducer(self, key, values):
-        redirect, others = None, []
+        redirect, linksFrom = None, []
         for value in values:
             if value[0] == 'r':
-                redirect = value
+                redirect = value[1]
             else:
-                others.append(value)
-
+                linksFrom.append(value[1])
         if redirect is None:
-            for other in others:
-                yield key, other
-        elif len(others) > 0:
-            self.increment_counter('Problems', 'Links from redirect pages')
+            for linkFrom in linksFrom:
+                self.increment_counter('Processed', 'Passed')
+                yield linkFrom, (self.options.rel_type, key)
+        else:
+            for linkFrom in linksFrom:
+                self.increment_counter('Processed', 'Redirected')
+                yield linkFrom, (self.options.rel_type, redirect)
 
 if __name__ == '__main__':
-    LinkChecker.run()
+    EffectiveLinksFinder.run()
 
 # vim: ts=4 sw=4 et
