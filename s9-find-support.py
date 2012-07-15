@@ -18,7 +18,7 @@
 import mrjob.job, mrjob.protocol
 
 class WeightFinder(mrjob.job.MRJob):
-    """For each langlink calculates the number of pairs of links of a different type "supporting" the langlink.
+    """For each langlink calculates the number of pairs of pagelinks "supporting" the langlink.
     For example, for the langlink en:France <-> fr:France, the pair of pagelinks
     en:France -> en:Paris and fr:France -> fr:Paris "supports" the langlink,
     since there is a langlink en:Paris <-> fr:Paris.
@@ -27,10 +27,6 @@ class WeightFinder(mrjob.job.MRJob):
 
     INPUT_PROTOCOL = mrjob.protocol.JSONProtocol
     OUTPUT_PROTOCOL = mrjob.protocol.JSONProtocol
-
-    def configure_options(self):
-        super(WeightFinder, self).configure_options()
-        self.add_passthrough_option('--rel-name', type='string', default=None, help='Name of the output relation')
 
     def mapper(self, key, line):
         yield key, line
@@ -94,7 +90,7 @@ class WeightFinder(mrjob.job.MRJob):
                 rights |= set([value[1]])
         common = len(lefts & rights)
         if common > 0:
-            yield key, (self.options.rel_name, common)
+            yield key, ('pl', common)
 
     def steps(self):
         return [self.mr(self.mapper, self.reducerA), self.mr(self.mapper, self.reducerB), self.mr(self.mapper, self.reducerC)]
