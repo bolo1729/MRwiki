@@ -44,9 +44,6 @@ class DumpsProcessor(mrjob.job.MRJob):
         elif dumpType == 'pagelinks':
             for record in self.parseLine(line):
                 yield self.processPagelink(dumpLang, record)
-        elif dumpType == 'categorylinks':
-            for record in self.parseLine(line):
-                yield self.processCategorylink(dumpLang, record)
 
     def reducer(self, key, values):
         for value in values:
@@ -87,14 +84,6 @@ class DumpsProcessor(mrjob.job.MRJob):
         self.increment_counter('processed', 'pagelinks')
         key = '%s:%s' % (lang, fromId)
         return key, ('pl', toNamespace, toTitle.encode('utf-8'))
-
-    def processCategorylink(self, lang, record):
-        fromId = record[0]
-        toTitle = record[1]
-
-        self.increment_counter('processed', 'categorylinks')
-        key = '%s:%s' % (lang, fromId)
-        return key, ('cl', toTitle.encode('utf-8'))
 
     def parseLine(self, line):
         cur = 0

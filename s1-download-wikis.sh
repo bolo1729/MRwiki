@@ -59,8 +59,6 @@ do
   get ${lg} "page.sql.gz" 
   get ${lg} "redirect.sql.gz" 
   get ${lg} "langlinks.sql.gz" 
-
-  get ${lg} "categorylinks.sql.gz" 
   get ${lg} "pagelinks.sql.gz" 
 done
 echo Finished at `date`

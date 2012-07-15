@@ -34,10 +34,7 @@ class LinkMatcher(mrjob.job.MRJob):
         if relType == 'p':
             pageNamespace = line[1]
             pageTitle = line[2]
-            if self.options.rel_type == 'cl':
-                if pageNamespace == '14':
-                    yield pageLang + ':' + pageTitle, (relType + 'R', pageId)
-            elif pageNamespace == '0':
+            if pageNamespace == '0':
                 yield pageLang + ':' + pageTitle, (relType + 'R', pageId)
         elif relType == self.options.rel_type:
             if relType in ('r', 'pl'):
@@ -45,8 +42,6 @@ class LinkMatcher(mrjob.job.MRJob):
                     yield pageLang + ':' + line[2], (relType + 'R', pageId)
             if relType == 'll':
                 yield line[1] + ':' + line[2], (relType + 'R', pageId)
-            if relType == 'cl':
-                yield pageLang + ':' + line[1], (relType + 'R', pageId)
 
     def reducer(self, key, values):
         page, linksFrom = None, []
