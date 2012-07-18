@@ -28,9 +28,6 @@ class WeightFinder(mrjob.job.MRJob):
     INPUT_PROTOCOL = mrjob.protocol.JSONProtocol
     OUTPUT_PROTOCOL = mrjob.protocol.JSONProtocol
 
-    def mapper(self, key, line):
-        yield key, line
-
     def pairType(self, pair):
         idA, idB = pair.split('#')
         langA = idA[0:idA.find(':')]
@@ -68,18 +65,18 @@ class WeightFinder(mrjob.job.MRJob):
             elif relType == 'suppRight':
                 rights.append(toId)
 
-            for lang in langs:
-                if lang < key:
-                    pair = lang + '#' + key
-                else:
-                    pair = key + '#' + lang
-                pairType = self.pairType(pair)
-                for left in lefts:
-                    if pairType == self.pairType(left):
-                        yield left, ('suppLeft', pair)
-                for right in rights:
-                    if pairType == self.pairType(right):
-                        yield right, ('suppRight', pair)
+        for lang in langs:
+            if lang < key:
+                pair = lang + '#' + key
+            else:
+                pair = key + '#' + lang
+            pairType = self.pairType(pair)
+            for left in lefts:
+                if pairType == self.pairType(left):
+                    yield left, ('suppLeft', pair)
+            for right in rights:
+                if pairType == self.pairType(right):
+                    yield right, ('suppRight', pair)
 
     def reducerC(self, key, values):
         lefts, rights = set(), set()
@@ -90,10 +87,10 @@ class WeightFinder(mrjob.job.MRJob):
                 rights |= set([value[1]])
         common = len(lefts & rights)
         if common > 0:
-            yield key, ('pl', common)
+            yield key, ('llSpl', common)
 
     def steps(self):
-        return [self.mr(self.mapper, self.reducerA), self.mr(self.mapper, self.reducerB), self.mr(self.mapper, self.reducerC)]
+        return [self.mr(None, self.reducerA), self.mr(None, self.reducerB), self.mr(None, self.reducerC)]
 
 if __name__ == '__main__':
     WeightFinder.run()
