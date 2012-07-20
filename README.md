@@ -92,10 +92,10 @@ Here is how we calculate the number of supporting langlinks for each langlink.
 
     python s9-find-support.py $WIKI/d6pl $WIKI/d8ll --output-dir $WIKI/d9llSpl $COMMONOPTS
 
-It works!
+Now, we want to group pages (and langlinks) into components. We will assign to every page and langlink the UUID of component.
 
-    python s10.py
+    python s10.py $WIKI/d3p $WIKI/d8ll --output-dir $WIKI/d10 $COMMONOPTS
 
-And:
+	Let's check which pages in particular language are connected into one component.
 
     python s11.py $WIKI/d10 --output-dir $WIKI/d11 $COMMONOPTS
