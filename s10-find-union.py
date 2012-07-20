@@ -34,6 +34,11 @@ class FindAndUnion(MRJob):
         id (typ, wart, ssid) ->
         -> ssid (typ, val, id)
         """
+        if value[0] == "p" and len(value) == 3:
+            if value[1] == "0":
+                value = [value[0], value[2]]
+            else:
+                return
         id1 = key
         if len(value) < 3:
             value.append(ssid_gen(key))
