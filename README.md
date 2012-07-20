@@ -98,4 +98,4 @@ It works!
 
 And:
 
-    python s11.py
+    python s11.py $WIKI/d10 --output-dir $WIKI/d11 $COMMONOPTS
