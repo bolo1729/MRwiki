@@ -94,5 +94,8 @@ Here is how we calculate the number of supporting langlinks for each langlink.
 
 It works!
 
-   python s10.py
+    python s10.py
 
+And:
+
+    python s11.py
