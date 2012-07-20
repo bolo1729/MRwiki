@@ -96,6 +96,6 @@ Now, we want to group pages (and langlinks) into components. We will assign to e
 
     python s10.py $WIKI/d3p $WIKI/d8ll --output-dir $WIKI/d10 $COMMONOPTS
 
-	Let's check which pages in particular language are connected into one component.
+Let's check which pages in particular language are connected into one component.
 
     python s11.py $WIKI/d10 --output-dir $WIKI/d11 $COMMONOPTS
