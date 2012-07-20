@@ -92,3 +92,7 @@ Here is how we calculate the number of supporting langlinks for each langlink.
 
     python s9-find-support.py $WIKI/d6pl $WIKI/d8ll --output-dir $WIKI/d9llSpl $COMMONOPTS
 
+It works!
+
+   python s10.py
+
