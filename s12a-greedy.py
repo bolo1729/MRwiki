@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-# Interwiki analysis tools (???)
-# Copyright (C) ??-?? ???
+# MRwiki -- tools for analyzing Wikipedia content (especially links) using Python and MapReduce.
+# Copyright (C) 2012  Sebastian Jaszczur
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
