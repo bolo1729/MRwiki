@@ -29,6 +29,10 @@ def ssid_gen(pid):
 class FindAndUnion(MRJob):
     INPUT_PROTOCOL = JSONProtocol
     
+    def configure_options(self):
+		super(FindAndUnion, self).configure_options()
+		self.add_passthrough_option('--iterations', type='int', default=5, help="Number of steps/iterations")
+    
     def my_init_map(self, key, value):
         """
         id (typ, wart, ssid) ->
@@ -89,7 +93,7 @@ class FindAndUnion(MRJob):
     
     def steps(self):
         return ([self.mr(self.my_init_map, self.my_reduce_loop)]+
-                [self.mr(self.my_mapper_nothing, self.my_reduce_loop)]*4+
+                [self.mr(self.my_mapper_nothing, self.my_reduce_loop)]*self.options.iterations+
                 [self.mr(self.my_mapper_nothing, self.my_reduce_final)])
 
 if __name__=="__main__":
