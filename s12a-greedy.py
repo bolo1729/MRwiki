@@ -19,8 +19,6 @@ from mrjob.job import MRJob
 from mrjob.protocol import JSONProtocol
 from random import sample
 
-ILOSC_WATKOW = 10
-
 def lang(id0):
 	return id0.split(":")[0]
 
@@ -64,6 +62,10 @@ class Zachlan(object):
 class Heurez(MRJob):
 	INPUT_PROTOCOL = JSONProtocol
 	
+	def configure_options(self):
+		super(Heurez, self).configure_options()
+		self.add_passthrough_option('--randoms', type='int', default=0, help="Number of random sequences")
+	
 	def my_init_map(self, key, value):
 		self.increment_counter("my_init_map", "my_init_map")
 		id1 = key
@@ -71,7 +73,7 @@ class Heurez(MRJob):
 		if typ != "ll":
 			return
 		else:
-			for watek in xrange(ILOSC_WATKOW):
+			for watek in xrange(self.options.randoms+1):
 				yield (ssid, watek), [typ, id1, id2, waga]
 		
 	def my_reduce(self, key, values):
@@ -111,7 +113,7 @@ class Heurez(MRJob):
 	
 	def steps(self):
 		return ([self.mr(self.my_init_map, self.my_reduce)] +
-			 	[self.mr(self.my_final_map, self.my_final_reduce)])
+			 	[self.mr(self.my_final_map, self.my_final_reduce)]*(self.options.randoms+1))
 
 
 if __name__ == "__main__":

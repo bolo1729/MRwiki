@@ -20,9 +20,6 @@ from mrjob.protocol import JSONProtocol
 import random
 from copy import deepcopy
 
-NUMBER_OF_TOURNAMENTS = 5 #it's maximum number(but real number is close to that)
-NUMBER_OF_SPORES_IN_TOURNAMENT = 5 #it's average number
-
 def lang(id0):
 	return id0.split(":")[0]
 
@@ -74,6 +71,12 @@ class Zachlan(object):
 class Genetic(MRJob):
 	INPUT_PROTOCOL = JSONProtocol
 	
+	def configure_options(self):
+		super(Genetic, self).configure_options()
+		self.add_passthrough_option('--tournaments', type='int', default=5, help="Number of tournaments in iteration")
+		self.add_passthrough_option('--spores', type='int', default=5, help="Number of spores in tournaments")
+		self.add_passthrough_option('--iterations', type='int', default=5, help="Number of steps/iterations")
+	
 	def my_init_map(self, key, value):
 		self.increment_counter("my_init_map", "my_init_map")
 		id1 = key
@@ -89,15 +92,15 @@ class Genetic(MRJob):
 		for value in values:
 			tab.append(value)
 		tab.sort(lambda a, b: a[-1].__cmp__(b[-1]))
-		for _ in xrange(NUMBER_OF_TOURNAMENTS):
+		for _ in xrange(self.options.tournaments):
 			yield key, tab
 	
 	def my_map(self, key, value):
-		yield (key, random.randint(0, NUMBER_OF_TOURNAMENTS)), value
-		for x in xrange(NUMBER_OF_SPORES_IN_TOURNAMENT-1):
+		yield (key, random.randint(0, self.options.tournaments)), value
+		for x in xrange(self.options.spores-1):
 			mutated = deepcopy(value)
 			mutate(mutated)
-			yield (key, random.randint(1, NUMBER_OF_TOURNAMENTS)), mutated
+			yield (key, random.randint(1, self.options.tournaments)), mutated
 	
 	def my_reduce(self, key, values):
 		random.jumpahead(key[1])
@@ -140,7 +143,7 @@ class Genetic(MRJob):
 	
 	def steps(self):
 		return ([self.mr(self.my_init_map, self.my_init_reduce)] +
-			 	[self.mr(self.my_map, self.my_reduce)]*5 + #magic number
+			 	[self.mr(self.my_map, self.my_reduce)]*self.options.iterations +
 			 	[self.mr(self.my_final_map, self.my_final_reduce)])
 
 
