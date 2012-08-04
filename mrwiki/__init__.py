@@ -16,11 +16,13 @@
 
 """Tools for analyzing Wikipedia content (especially links) using Python and MapReduce."""
 
-__author__ = 'Lukasz Bolikowski <l.bolikowski@icm.edu.pl>'
+__all__ = ['importer', 'model']
+
+__author__ = 'Łukasz Bolikowski <l.bolikowski@icm.edu.pl>'
 
 __credits__ = [
-    'Sebastian Jaszczur',
-    'Marcin Kacprzak'
+    'Sebastian Jaszczur <sebastian.jaszczur@gmail.com>',
+    'Maciej Kacprzak <paramaciej@gmail.com>'
 ]
 
 __version__ = '0.1-dev'
