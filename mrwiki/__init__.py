@@ -18,7 +18,7 @@
 
 __all__ = ['importer', 'model']
 
-__author__ = 'Łukasz Bolikowski <l.bolikowski@icm.edu.pl>'
+__author__ = 'Lukasz Bolikowski <l.bolikowski@icm.edu.pl>'
 
 __credits__ = [
     'Sebastian Jaszczur <sebastian.jaszczur@gmail.com>',
