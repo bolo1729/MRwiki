@@ -24,7 +24,7 @@ def lang(id0):
 	return id0.split(":")[0]
 
 def mutate(tab):
-	#tab have to be a list
+	#tab has to be a list
 	length = len(tab)
 	for _ in xrange(length/10+random.randint(0, 1)):#magic number
 		a = random.randint(0, length-1)
@@ -68,6 +68,12 @@ class Zachlan(object):
 		if self.zespol_grupy(id1, id2):
 			self._wynik.append(tuple(krawedz))
 
+def wynik_zachlanny(lista):
+	Z = Zachlan()
+	for x in lista:
+		Z.dodaj(x)
+	return Z.wynik()
+
 class Genetic(MRJob):
 	INPUT_PROTOCOL = JSONProtocol
 	
@@ -92,6 +98,7 @@ class Genetic(MRJob):
 		for value in values:
 			tab.append(value)
 		tab.sort(lambda a, b: a[-1].__cmp__(b[-1]))
+		
 		for _ in xrange(self.options.tournaments):
 			yield key, tab
 	
@@ -106,14 +113,12 @@ class Genetic(MRJob):
 		random.jumpahead(key[1])
 		best = None
 		for value in values:
-			wyn = Zachlan()
-			for x in value:
-				wyn.dodaj(x)
+			wyn = wynik_zachlanny(value)
 			if best == None:
 				best = value
-				bestval = sum([x[-1] for x in wyn.wynik()])
+				bestval = sum([x[-1] for x in wyn])
 			else:
-				actval = sum([x[-1] for x in wyn.wynik()])
+				actval = sum([x[-1] for x in wyn])
 				if actval<bestval:
 					bestval = actval
 					best = value
@@ -122,24 +127,9 @@ class Genetic(MRJob):
 	def my_final_map(self, key, value):
 		yield key, value
 	
-	def my_final_reduce(self, key, values):
-		best = None
-		bestwyn = None
-		for value in values:
-			wyn = Zachlan()
-			for x in value:
-				wyn.dodaj(x)
-			if best == None:
-				best = value
-				bestwyn = wyn.wynik()
-				bestval = sum([x[-1] for x in wyn.wynik()])
-			else:
-				actval = sum([x[-1] for x in wyn.wynik()])
-				if actval<bestval:
-					bestval = actval
-					bestwyn = wyn.wynik()
-					best = value
-		yield key, bestwyn
+	def my_final_reduce(self, key, values):#uses normal reduce
+		for k, v in self.my_reduce(key, values):
+			yield key, wynik_zachlanny(v)
 	
 	def steps(self):
 		return ([self.mr(self.my_init_map, self.my_init_reduce)] +
